@@ -6,14 +6,15 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import dev.hayohtee.quicknote.data.local.model.LocalNote
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LocalNoteDao {
     @Query("SELECT * FROM note_table")
-    suspend fun getAll(): List<LocalNote>
+    suspend fun getAll(): Flow<List<LocalNote>>
 
     @Query("SELECT * FROM note_table WHERE id = :id")
-    suspend fun getById(id: Long): LocalNote
+    suspend fun getById(id: Long): LocalNote?
 
     @Query("DELETE FROM note_table WHERE id = :id")
     suspend fun deleteById(id: Long)
