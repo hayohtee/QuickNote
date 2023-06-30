@@ -1,0 +1,26 @@
+package dev.hayohtee.quicknote.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import dev.hayohtee.quicknote.data.local.model.LocalNote
+
+@Dao
+interface LocalNoteDao {
+    @Query("SELECT * FROM note_table")
+    suspend fun getAll(): List<LocalNote>
+
+    @Query("SELECT * FROM note_table WHERE id = :id")
+    suspend fun getById(id: Long): LocalNote
+
+    @Query("DELETE FROM note_table WHERE id = :id")
+    suspend fun deleteById(id: Long)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(note: LocalNote)
+
+    @Update
+    suspend fun update(note: LocalNote)
+}
