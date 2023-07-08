@@ -14,7 +14,7 @@ interface LocalNoteDao {
     fun getAll(): Flow<List<LocalNote>>
 
     @Query("SELECT * FROM note_table WHERE id = :id")
-    suspend fun getById(id: Long): LocalNote?
+    fun getById(id: Long): Flow<LocalNote?>
 
     @Query("DELETE FROM note_table WHERE id = :id")
     suspend fun deleteById(id: Long)
