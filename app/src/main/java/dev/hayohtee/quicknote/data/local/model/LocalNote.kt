@@ -7,8 +7,8 @@ import java.util.Date
 @Entity(tableName = "note_table")
 data class LocalNote(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Long = 0,
     val title: String,
     val content: String,
-    val date: Date
+    val date: Date = Date()
 )
