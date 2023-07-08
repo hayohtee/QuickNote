@@ -1,12 +1,12 @@
-package dev.hayohtee.quicknote.ui.screens
+package dev.hayohtee.quicknote.ui.screens.notes
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
@@ -30,20 +30,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.hayohtee.quicknote.R
 import dev.hayohtee.quicknote.domain.Note
-import dev.hayohtee.quicknote.ui.NoteItem
-import dev.hayohtee.quicknote.ui.NoteItemSpanned
+import dev.hayohtee.quicknote.ui.components.NoteItem
 import dev.hayohtee.quicknote.ui.theme.QuickNoteTheme
 import java.util.Date
 
-private const val NOTE_TITLE_LIMIT = 50
-private fun shouldNoteSpan(note: Note): Boolean {
-    return note.title.length >= NOTE_TITLE_LIMIT
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    notes: List<Note>,
+fun NoteListScreen(
+    state: NotesUIState,
     onSearchClick: () -> Unit,
     onItemClick: (Long) -> Unit,
     onAddNoteClick: () -> Unit
@@ -73,11 +67,11 @@ fun HomeScreen(
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            if (notes.isEmpty()) {
+            if (!state.isLoading && state.notes.isEmpty()) {
                 Text(text = stringResource(id = R.string.empty_notes_label))
             }
             NoteList(
-                notes = notes,
+                notes = state.notes,
                 onItemClick = onItemClick,
                 Modifier.matchParentSize()
             )
@@ -112,29 +106,16 @@ fun HomeTopAppBar(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteList(notes: List<Note>, onItemClick: (Long) -> Unit, modifier: Modifier = Modifier) {
-    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = modifier) {
-        items(
-            items = notes,
-            span = { note ->
-                val spanCount = if (shouldNoteSpan(note)) 2 else 1
-                GridItemSpan(spanCount)
-            }
-        ) { note ->
-            if (shouldNoteSpan(note)) {
-                NoteItemSpanned(
-                    note = note,
-                    onClick = onItemClick,
-                    modifier = Modifier.padding(8.dp)
-                )
-            } else {
-                NoteItem(
-                    note = note,
-                    onClick = onItemClick,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
+    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2), modifier = modifier) {
+        items(items = notes, key = { it.id }) { note ->
+            NoteItem(
+                note = note,
+                onClick = onItemClick,
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }
@@ -159,7 +140,7 @@ fun NoteFloatingActionButtonPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
+fun NoteListScreenPreview() {
     QuickNoteTheme {
         val notes = listOf(
             Note(
@@ -195,8 +176,12 @@ fun HomeScreenPreview() {
             ),
         )
 
-        HomeScreen(
-            notes = notes,
+        NoteListScreen(
+            state = NotesUIState(
+                notes = notes,
+                isLoading = false,
+                errorMessage = null
+            ),
             onSearchClick = {},
             onItemClick = {},
             onAddNoteClick = {}
