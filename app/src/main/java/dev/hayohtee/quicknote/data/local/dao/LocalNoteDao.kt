@@ -24,4 +24,7 @@ interface LocalNoteDao {
 
     @Update
     suspend fun update(note: LocalNote)
+
+    @Query("SELECT * FROM note_table WHERE title LIKE '%' || :query || '%'")
+    fun searchNotes(query: String): Flow<List<LocalNote>>
 }
