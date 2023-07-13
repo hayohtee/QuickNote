@@ -10,7 +10,11 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import dev.hayohtee.quicknote.R
@@ -53,13 +57,21 @@ fun SearchNotesBar(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusRequester = remember {
+        FocusRequester()
+    }
+
+    LaunchedEffect(key1 = focusRequester) {
+        focusRequester.requestFocus()
+    }
+
     SearchBar(
         query = query,
         onQueryChange = onQueryChange,
         onSearch = onSearch,
         active = active,
         onActiveChange = onActiveChange,
-        modifier = modifier,
+        modifier = modifier.focusRequester(focusRequester),
         placeholder = {
             Text(text = stringResource(id = R.string.search_your_notes))
         },
