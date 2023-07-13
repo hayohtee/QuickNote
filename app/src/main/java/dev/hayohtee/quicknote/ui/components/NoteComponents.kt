@@ -17,8 +17,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
@@ -136,7 +140,11 @@ fun NoteTextField(
         if (value.isEmpty()) {
             Text(
                 text = placeholder,
-                style = textStyle
+                style = textStyle.copy(
+                    color = MaterialTheme.colorScheme.onBackground.copy(
+                        alpha = 0.5f
+                    )
+                )
             )
         }
     }
@@ -150,6 +158,14 @@ fun NoteFields(
     onContentChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusRequester = remember {
+        FocusRequester()
+    }
+
+    LaunchedEffect(key1 = focusRequester) {
+        focusRequester.requestFocus()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -182,7 +198,7 @@ fun NoteFields(
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 color = MaterialTheme.colorScheme.onBackground
             ),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).focusRequester(focusRequester)
         )
 
     }
