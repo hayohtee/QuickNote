@@ -50,6 +50,14 @@ class NoteRepository @Inject constructor(private val localNoteDao: LocalNoteDao)
         }
     }
 
+    suspend fun searchNotes(query: String): Flow<List<Note>> {
+        return withContext(Dispatchers.IO) {
+            localNoteDao.searchNotes(query).transform { localNotes ->
+                emit(localNotes.map { localNote -> localNote.toNote() })
+            }
+        }
+    }
+
 }
 
 private fun LocalNote.toNote(): Note {
