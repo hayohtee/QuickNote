@@ -144,7 +144,8 @@ fun NoteTextField(
                     color = MaterialTheme.colorScheme.onBackground.copy(
                         alpha = 0.5f
                     )
-                )
+                ),
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -198,7 +199,7 @@ fun NoteFields(
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 color = MaterialTheme.colorScheme.onBackground
             ),
-            modifier = Modifier.weight(1f).focusRequester(focusRequester)
+            modifier = Modifier.focusRequester(focusRequester)
         )
 
     }
