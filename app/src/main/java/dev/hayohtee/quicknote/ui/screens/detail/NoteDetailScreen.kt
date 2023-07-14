@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -21,6 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -74,7 +76,7 @@ fun NoteDetailScreen(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text(
+                    SelectableText(
                         text = state.note.title,
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold
@@ -85,17 +87,28 @@ fun NoteDetailScreen(
                             .format(state.note.date),
                         style = MaterialTheme.typography.labelLarge
                     )
-                    Text(
+                    SelectableText(
                         text = state.note.content,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
-
         }
-
     }
+}
 
+@Composable
+fun SelectableText(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = TextStyle.Default
+) {
+    SelectionContainer(modifier = modifier) {
+        Text(
+            text = text,
+            style = style
+        )
+    }
 }
 
 @Preview(showBackground = true)
