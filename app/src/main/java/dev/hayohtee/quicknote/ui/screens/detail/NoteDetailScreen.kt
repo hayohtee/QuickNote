@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -22,7 +23,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,45 +69,39 @@ fun NoteDetailScreen(
                 .padding(paddingValues)
         ) {
             if (!state.isLoading && state.note != null) {
-                Column(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .padding(16.dp)
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    SelectableText(
-                        text = state.note.title,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                    Text(
-                        text = DateFormat.getPatternInstance(DateFormat.YEAR_MONTH_DAY)
-                            .format(state.note.date),
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                    SelectableText(
-                        text = state.note.content,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                SelectionContainer {
+                    Column(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        if (state.note.title.isNotEmpty()) {
+                            Text(
+                                text = state.note.title,
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                        }
+                        DisableSelection {
+                            Text(
+                                text = DateFormat.getPatternInstance(DateFormat.YEAR_MONTH_DAY)
+                                    .format(state.note.date),
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                        if (state.note.content.isNotEmpty()) {
+                            Text(
+                                text = state.note.content,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun SelectableText(
-    text: String,
-    modifier: Modifier = Modifier,
-    style: TextStyle = TextStyle.Default
-) {
-    SelectionContainer(modifier = modifier) {
-        Text(
-            text = text,
-            style = style
-        )
     }
 }
 
