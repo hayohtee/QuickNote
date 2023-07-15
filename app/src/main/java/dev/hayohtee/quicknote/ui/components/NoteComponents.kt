@@ -10,18 +10,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
@@ -127,27 +128,24 @@ fun NoteTextField(
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
-
-        val scrollState = rememberScrollState()
-        LaunchedEffect(key1 = scrollState.maxValue) {
-            scrollState.scrollTo(scrollState.maxValue)
-        }
-
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             textStyle = textStyle,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             keyboardOptions = keyboardOptions,
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(scrollState)
+            modifier = modifier.fillMaxWidth()
         )
 
         if (value.isEmpty()) {
             Text(
                 text = placeholder,
-                style = textStyle
+                style = textStyle.copy(
+                    color = MaterialTheme.colorScheme.onBackground.copy(
+                        alpha = 0.5f
+                    )
+                ),
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -161,6 +159,14 @@ fun NoteFields(
     onContentChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusRequester = remember {
+        FocusRequester()
+    }
+
+    LaunchedEffect(key1 = focusRequester) {
+        focusRequester.requestFocus()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -192,7 +198,8 @@ fun NoteFields(
             ),
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 color = MaterialTheme.colorScheme.onBackground
-            )
+            ),
+            modifier = Modifier.focusRequester(focusRequester)
         )
 
     }

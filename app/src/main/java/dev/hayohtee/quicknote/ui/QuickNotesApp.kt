@@ -15,6 +15,8 @@ import dev.hayohtee.quicknote.ui.screens.editnote.EditNoteScreen
 import dev.hayohtee.quicknote.ui.screens.editnote.EditNoteViewModel
 import dev.hayohtee.quicknote.ui.screens.notes.NoteListScreen
 import dev.hayohtee.quicknote.ui.screens.notes.NotesViewModel
+import dev.hayohtee.quicknote.ui.screens.search.SearchNoteScreen
+import dev.hayohtee.quicknote.ui.screens.search.SearchNotesViewModel
 
 @Composable
 fun QuickNotesApp() {
@@ -26,11 +28,31 @@ fun QuickNotesApp() {
 
             NoteListScreen(
                 state = viewModel.state.value,
-                onSearchClick = { /*TODO*/ },
+                onSearchClick = { navController.navigate(route = "search") },
                 onItemClick = { id ->
                     navController.navigate("notes/$id")
                 },
                 onAddNoteClick = { navController.navigate(route = "add_note") }
+            )
+        }
+
+        composable(route = "search") {
+            val viewModel: SearchNotesViewModel = hiltViewModel()
+
+            SearchNoteScreen(
+                notes = viewModel.filteredNote.value,
+                query = viewModel.query.value,
+                onQueryChange = viewModel.onQueryChange,
+                onSearch = { viewModel.filterNotes(it) },
+                active = viewModel.active.value,
+                onActiveChange = { isActive ->
+                    viewModel.onActiveChange
+                    if (!isActive) {
+                        navController.popBackStack()
+                    }
+                },
+                onNoteItemClick = { id -> navController.navigate("notes/$id") },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
